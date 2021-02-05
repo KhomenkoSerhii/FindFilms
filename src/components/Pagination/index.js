@@ -73,11 +73,13 @@ const MainPagination = ({ data, prevPage, nextPage, pageNumm }) => {
   useEffect(() => {
     setPosts(data);
   }, [data]);
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
   return (
     <>
       {currentPosts?.map((i) => (
-        <React.Fragment key={i.popularity}>
+        <React.Fragment key={i.overview + i.id + i.original_title}>
           <CardComponent
             genres={i.genres}
             img={i.poster_path}
@@ -100,31 +102,38 @@ const MainPagination = ({ data, prevPage, nextPage, pageNumm }) => {
         >
           {pageNumm === 1 ? pageNumm - 1 : pageNumm + pageNumm - 2}
         </Button>
-        <a
-          href="#"
-          className={cn(classes.pageNum, {
-            [classes.pageNumSelected]: 1 === currentPage,
-          })}
+        <Button
           onClick={() => {
             changePage(1);
           }}
         >
-          {pageNumm + pageNumm - 1}
-        </a>
-        <a
-          href="#"
-          className={cn(classes.pageNum, {
-            [classes.pageNumSelected]: 2 === currentPage,
-          })}
+          <a
+            href="#"
+            className={cn(classes.pageNum, {
+              [classes.pageNumSelected]: 1 === currentPage,
+            })}
+          >
+            {pageNumm + pageNumm - 1}
+          </a>
+        </Button>
+        <Button
+          disabled={data.length < 10}
           onClick={() => {
             changePage(2);
           }}
         >
-          {pageNumm + pageNumm}
-        </a>
+          <a
+            href="#"
+            className={cn(classes.pageNum, {
+              [classes.pageNumSelected]: 2 === currentPage,
+            })}
+          >
+            {pageNumm + pageNumm}
+          </a>
+        </Button>
 
         <Button
-          disabled={currentPosts.length < 10}
+          disabled={data.length < 20}
           className={classes.btn}
           startIcon={<DoubleArrowIcon />}
           variant="outlined"
