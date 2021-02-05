@@ -3,8 +3,7 @@ import CardComponent from "../../components/Card";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-
+import cn from "classnames";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles({
@@ -30,32 +29,55 @@ const useStyles = makeStyles({
     fontSize: "8px",
     color: "blue",
   },
+  pageNumSelected: {
+    border: "1px solid red",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pageNum: {},
 });
 
-const MainPagination = ({ data, prevPage, nextPage }) => {
+const MainPagination = ({ data, prevPage, nextPage, pageNumm }) => {
   const classes = useStyles();
+
   const [dataCount, setPosts] = useState([]);
   const [postsPerPage, setPostsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  useEffect(() => {
-    setPosts(data);
-  }, [data]);
 
   const lastPostIndex = postsPerPage * currentPage;
   const firstPostIndex = lastPostIndex - postsPerPage;
 
   const currentPosts = dataCount.slice(firstPostIndex, lastPostIndex);
+
   const changePage = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.floor(dataCount.length / postsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  // const pageNumbers = [];
+  // for (let i = 1; i <= Math.floor(dataCount.length / postsPerPage); i++) {
+  //   pageNumbers.push({id:i});
+  // }
+
+  const detPagesFunc = (id) => {
+    changePage(id);
+    if (id === 1) {
+      nextPage();
+    } else {
+      prevPage();
+    }
+  };
+
+  useEffect(() => {
+    setPosts(data);
+  }, [data]);
+
   return (
     <>
       {currentPosts?.map((i) => (
-        <React.Fragment key={i.title}>
+        <React.Fragment key={i.popularity}>
           <CardComponent
             genres={i.genres}
             img={i.poster_path}
@@ -66,33 +88,54 @@ const MainPagination = ({ data, prevPage, nextPage }) => {
       ))}
       <div className={classes.navBtns}>
         <Button
+          disabled={pageNumm <= 1}
           className={classes.btn}
           startIcon={<DoubleArrowIcon className={classes.rotated} />}
           variant="outlined"
           color="primary"
           href="#outlined-buttons"
-          onClick={() => prevPage()}
-        ></Button>
-        {pageNumbers.map((number) => {
-          return (
-            <React.Fragment key={number}>
-              <a href="#" onClick={() => changePage(number)}>
-                <FiberManualRecordIcon className={classes.dot} />
-              </a>
-            </React.Fragment>
-          );
-        })}
+          onClick={() => {
+            detPagesFunc(2);
+          }}
+        >
+          {pageNumm === 1 ? pageNumm - 1 : pageNumm + pageNumm - 2}
+        </Button>
+        <a
+          href="#"
+          className={cn(classes.pageNum, {
+            [classes.pageNumSelected]: 1 === currentPage,
+          })}
+          onClick={() => {
+            changePage(1);
+          }}
+        >
+          {pageNumm + pageNumm - 1}
+        </a>
+        <a
+          href="#"
+          className={cn(classes.pageNum, {
+            [classes.pageNumSelected]: 2 === currentPage,
+          })}
+          onClick={() => {
+            changePage(2);
+          }}
+        >
+          {pageNumm + pageNumm}
+        </a>
+
         <Button
+          disabled={currentPosts.length < 10}
           className={classes.btn}
           startIcon={<DoubleArrowIcon />}
           variant="outlined"
           color="primary"
           href="#outlined-buttons"
           onClick={() => {
-            nextPage();
-            changePage(1);
+            detPagesFunc(1);
           }}
-        ></Button>
+        >
+          {(pageNumm += pageNumm + 1)}
+        </Button>
       </div>
     </>
   );
@@ -102,6 +145,7 @@ MainPagination.propTypes = {
   data: PropTypes.array.isRequired,
   prevPage: PropTypes.func.isRequired,
   nextPage: PropTypes.func.isRequired,
+  pageNumm: PropTypes.number.isRequired,
 };
 
 export default MainPagination;

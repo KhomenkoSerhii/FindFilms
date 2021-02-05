@@ -7,6 +7,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
 import { IMG_API } from "../../constants";
+import noImage from "../../assets/img/noImage.jpg";
 
 const useStyles = makeStyles({
   root: {
@@ -30,7 +31,7 @@ const CardComponent = ({ img, title, year, genres }) => {
       <CardActionArea className={classes.activePart}>
         <CardMedia
           component="img"
-          image={`${IMG_API}/${img}`}
+          image={img ? `${IMG_API}/${img}` : noImage}
           className={classes.img}
         />
         <CardContent>
@@ -52,7 +53,7 @@ const CardComponent = ({ img, title, year, genres }) => {
 
 CardComponent.propTypes = {
   genres: PropTypes.array,
-  img: PropTypes.string.isRequired,
+  img: PropTypes.string,
   title: PropTypes.string.isRequired,
   year: PropTypes.string,
 };

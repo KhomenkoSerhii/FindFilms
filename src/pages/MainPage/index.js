@@ -71,11 +71,18 @@ const MainPageComponent = () => {
   };
 
   useEffect(() => {
+    setPageNum({
+      page_num: (pageNum.page_num = 1),
+    });
     getGenres().then((res) => setGenresData(res));
-    searchMoviesByInput(stateGenre).then((res) => {
+    searchMoviesByInput(stateGenre, pageNum.page_num).then((res) => {
       setData(res);
     });
   }, [stateGenre]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
 
   return (
     <div className={classes.App}>
@@ -86,6 +93,7 @@ const MainPageComponent = () => {
             data={dataArray}
             prevPage={prevPage}
             nextPage={nextPage}
+            pageNumm={pageNum.page_num}
           />
         </div>
       )}
